@@ -1,0 +1,61 @@
+from forex_python.converter import CurrencyRates
+
+historique = []
+devises_preferées = {}
+
+def convertir():
+    # Créer une instance de CurrencyRates
+    c = CurrencyRates()
+
+    # Saisir le montant et les devises d'origine et cible
+    montant = float(input("Entrez le montant que vous voulez convertir : "))
+    la_devise = input("Entrez la devise d'origine en majuscule (code ISO) : ").upper()
+    devise_cible = input("Entrez la devise cible en majuscule (code ISO) : ").upper()
+
+    # Vérifier si les devises sont valides
+    devises_disponibles = set(c.get_rates('USD').keys())
+    devises_disponibles.update(devises_preferées.keys())
+    if la_devise not in devises_disponibles or devise_cible not in devises_disponibles:
+        print("Erreur : Au moins l'une des devises n'est pas valide.")
+    else:
+        # Obtenir le taux de change
+        taux_change = c.get_rate(la_devise, devise_cible)
+
+        # Calculer la valeur convertie
+        montant_resultat = montant * taux_change
+
+        # Afficher le résultat
+        print(f"Le résultat de votre conversion est : {montant_resultat:.2f} {devise_cible}")
+        ajouter_historique(montant, la_devise, montant_resultat, devise_cible)
+
+def ajouter_historique(montant, devise_origine, montant_resultat, devise_cible):
+    # Ajouter l'opération à la liste d'historique
+    historique.append({
+        "Le montant": montant,
+        "La deviseorigine": devise_origine,
+        "La devisecible": devise_cible,
+        "le résultat ": montant_resultat
+    })
+    print("Votre historique :", historique)
+
+def ajouter_devise_personnalisee():
+    devise = input("Entrez le code ISO de la devise à ajouter : ").upper()
+    taux_change = float(input("Entrez le taux de conversion par rapport à USD : "))
+    devises_preferées[devise] = taux_change
+    print(f"La devise {devise} a été ajoutée avec un taux de conversion de {taux_change}")
+
+def devises_preferees():
+    print("Devises préférées actuelles : ", devises_preferées)
+
+def main():
+    devises_preferees()
+    ajouter_devise_personnalisee()
+    convertir()
+    devises_preferees()
+
+if __name__ == "__main__":
+    main()
+
+
+
+
